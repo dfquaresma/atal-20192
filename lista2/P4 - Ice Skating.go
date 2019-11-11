@@ -25,9 +25,11 @@ func main() {
     var x, y int
     scanf("%d %d\n", &x, &y)
     matrix[x][y] = 1
+    matrix[y][x] = 1
     xcount[x]++;
     ycount[y]++;
   }
+
   count := 0
   for i := 1; i <= 1000; i++ {
     for j := 1; i <= 1000; i++ {
@@ -36,5 +38,6 @@ func main() {
       }
     }
   }
+  
   fmt.Println(count)
 }
