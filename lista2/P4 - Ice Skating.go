@@ -4,6 +4,7 @@ import (
   "fmt"
   "bufio"
   "os"
+  "strconv"
 )
 
 // Took from here: https://www.codementor.io/tucnak/using-golang-for-competitive-programming-h8lhvxzt3
@@ -12,32 +13,44 @@ var writer *bufio.Writer = bufio.NewWriterSize(os.Stdout,10000000)
 func printf(f string, a ...interface{}) { fmt.Fprintf(writer, f, a...) }
 func scanf(f string, a ...interface{}) { fmt.Fscanf(reader, f, a...) }
 
+var n, count int
+var matrix [1001][1001]int
+
 func main() {
   // STDOUT MUST BE FLUSHED MANUALLY!!!
   defer writer.Flush()
-
-  var n int
-  scanf("%d\n", &n)
-  var xcount [1001]int
-  var ycount [1001]int
-  var matrix [1001][1001]int
+  
+  scanf("%d %d\n", &n)
   for i := 1; i <= n; i++ {
-    var x, y int
-    scanf("%d %d\n", &x, &y)
-    matrix[x][y] = 1
-    matrix[y][x] = 1
-    xcount[x]++;
-    ycount[y]++;
+    var a, b int
+    scanf("%d %d\n", &a, &b)
+    matrix[a][b] = 1
   }
-
-  count := 0
+  
   for i := 1; i <= 1000; i++ {
-    for j := 1; i <= 1000; i++ {
-      if matrix[i][j] == 1 && xcount[i] == 1 && ycount[j] == 1 {
+    for j := 1; j <= 1000; j++ {
+      if matrix[i][j] == 1 {
         count++
+        dfs_adaptada(i, j)
+        break
       }
     }
   }
-  
-  fmt.Println(count)
+  printf(strconv.Itoa(count - 1))
+}
+
+func dfs_adaptada(x, y int) () {
+  if matrix[x][y] == 1 {
+    matrix[x][y] = 2
+    for i := x + 1; i <= 1000; i++ {
+      if matrix[i][y] == 1 {
+        dfs_adaptada(i, y)
+      }
+    }
+    for j := y + 1; j <= 1000; j++ {
+      if matrix[x][j] == 1 {
+        dfs_adaptada(x, j)
+      }
+    }
+  }
 }
