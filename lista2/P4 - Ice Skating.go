@@ -20,7 +20,7 @@ func main() {
   // STDOUT MUST BE FLUSHED MANUALLY!!!
   defer writer.Flush()
   
-  scanf("%d %d\n", &n)
+  scanf("%d\n", &n)
   for i := 1; i <= n; i++ {
     var a, b int
     scanf("%d %d\n", &a, &b)
