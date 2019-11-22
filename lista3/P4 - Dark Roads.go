@@ -5,6 +5,7 @@ import (
   "bufio"
   "os"
   "strconv"
+  "sort"
 )
  
 // Took from here: https://www.codementor.io/tucnak/using-golang-for-competitive-programming-h8lhvxzt3
@@ -35,6 +36,7 @@ func main() {
     cons[i] = &con{x, y, z}
     max += z
   }
+  sort.SliceStable(cons, func(i, j int) bool { return cons[i].z < cons[j].z })
   kruskal := make([]int, m+1)
   for i := 1; i <= m; i++ {
   }
