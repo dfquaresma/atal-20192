@@ -30,15 +30,10 @@ func main() {
   for {
     scanf("%d %d\n", &m, &n)
     if m == 0 && n == 0 { break }
-    
     cons  = make([]*con, n)
     var x, y, z, max int
     for i := 0; i < n; i++ {
-      scanf("%d %d ", &x, &y)
-      if x == 0 && y == 0 {
-        break
-      }
-      scanf("%d\n", &z)
+      scanf("%d %d %d\n", &x, &y, &z)
       cons[i]  = &con{x, y, z}
       max += z
     }
