@@ -37,7 +37,10 @@ func main() {
       cons[i]  = &con{x, y, z}
       max += z
     }
-    initFatherAndRank(m+1)
+    size := m+1
+    father = make([]int, size)
+    rank   = make([]int, size)
+    for i := 1; i < size; i++ { father[i] = i; rank[i] = 1; }
     minimumCoverTreeSum := kruskal(m, n)
     printf(strconv.Itoa(max - minimumCoverTreeSum))
   }
@@ -73,13 +76,4 @@ func union(nodeAIndex, nodeBIndex int) {
     }
     rank[nodeAIndex]  += rank[nodeBIndex];
     father[nodeBIndex] = father[nodeAIndex];
-}
-
-func initFatherAndRank(size int) {
-  father = make([]int, size)
-  rank   = make([]int, size)
-  for i := 1; i < size; i++ {
-    father[i] = i;
-    rank[i] = 1;
-  } 
 }
