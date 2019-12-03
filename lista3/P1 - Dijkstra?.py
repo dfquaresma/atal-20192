@@ -1,42 +1,74 @@
 # DESISTI DE FAZER EM GO...
 n, m = map(int, input().split())
 
-adjacencyMatrix  = [[0] * (n + 1) for _ in range(n+1)]
-distanceToRoot   = [float('inf') for _ in range(n+1)]
-predecessor      = [None for _ in range(n+1)]
-used             = [False for _ in range(n+1)]
-
+adjacencyMatrix  = {}
 def updateMatrix(a, b, w):
-  if adjacencyMatrix[a][b] != 0:
-    w = min(w, adjacencyMatrix[a][b])
-  adjacencyMatrix[a][b] = w
-  adjacencyMatrix[b][a] = w
+  a_exist = adjacencyMatrix.get(a)
+  b_exist = adjacencyMatrix.get(b)
 
+  if a_exist and b_exist:
+    a_and_b_know_each_other = a_exist.get(b)
+    if a_and_b_know_each_other:
+      w = min(w, adjacencyMatrix[a][b])
+    adjacencyMatrix[a][b] = w
+    adjacencyMatrix[b][a] = w
+
+  else:
+    if a_exist:
+      adjacencyMatrix[a][b] = w
+      adjacencyMatrix[b] = {a: w}
+
+    elif b_exist:
+      adjacencyMatrix[b][a] = w
+      adjacencyMatrix[a] = {b: w}
+    
+    else:
+      adjacencyMatrix[a] = {b: w}
+      adjacencyMatrix[b] = {a: w}
+
+predecessor      = {}
 for i in range(m):
   a, b, w = map(int, input().split())
   updateMatrix(a, b, w)
+  predecessor[a] = None
+  predecessor[b] = None
 
+h = []
+distanceToRoot   = {}
 def relax(u, v):
-  distanceThroughU = distanceToRoot[u] + adjacencyMatrix[u][v]
-  if distanceToRoot[v] > distanceThroughU:
+  distanceToRootFromU = distanceToRoot.get(u)
+  if distanceToRootFromU == None:
+    distanceToRootFromU = float('inf')
+  distanceThroughU = distanceToRootFromU + adjacencyMatrix[u][v]
+
+  distanceToRootFromV = distanceToRoot.get(v)
+  if distanceToRootFromV == None:
+    distanceToRootFromV = float('inf')
+
+  if distanceToRootFromV > distanceThroughU:
     distanceToRoot[v] = distanceThroughU
     predecessor[v] = u
+    heappush(h, (distanceThroughU, v))
 
-distanceToRoot[1] = 0
-predecessor[1] = 1
+used = {}
+from heapq import *
 def extractMin():
-  idOfTheMin = 0
-  for i in range(n):
-    if not used[i] and distanceToRoot[i] < distanceToRoot[idOfTheMin]:
-      idOfTheMin = i
-  return idOfTheMin
+  return heappop(h)
 
-for i in range(n):
+predecessor[1] = 1
+distanceToRoot[1] = 0
+heappush(h, (0, 1))
+i = 0
+while i < n:
   u = extractMin()
-  for j in range(1, n + 1):
-      if used[j] == False and adjacencyMatrix[u][j] != 0:
-        relax(u, j)
+  uid = u[1]
+  if used.get(uid):
+    continue
+  for nid, w in adjacencyMatrix[uid].items():
+    if not used.get(nid):
+      relax(uid, nid)
   used[u] = True
+  i += 1
 
 output = str(n)
 nod = predecessor[n]
