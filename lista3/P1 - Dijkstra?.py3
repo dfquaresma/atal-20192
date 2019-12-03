@@ -1,62 +1,41 @@
 # DESISTI DE FAZER EM GO...
 from heapq import *
-import traceback
 
-try:
-  n, m = map(int, input().split())
-  adjacencyMatrix  = {}
-  for i in range(1, n + 1):
-    adjacencyMatrix[i] = {}
-  for i in range(m):
-    a, b, w = map(int, input().split())
-    a, b, w = int(a), int(b), int(w)
-    if not a in adjacencyMatrix[b] or adjacencyMatrix[b][a] > w:
-      adjacencyMatrix[b][a] = w
-    if not b in adjacencyMatrix[a] or adjacencyMatrix[a][b] > w:
-      adjacencyMatrix[a][b] = w
+n, m = map(int, input().split())
+adjacency_list = [[]]
+distanceToRoot = [float("inf")]
+predecessor = [None]
+for i in range(1, n + 1):
+  adjacency_list.append([])
+  distanceToRoot.append(float("inf"))
+  predecessor.append(None)
 
-  saw = {}
-  predecessor = {}
-  distanceToRoot = {}
-  for i in range(1, n + 1):
-      predecessor[i] = None
-      distanceToRoot[i] = float('inf')
-      saw[i] = False
+for i in range(m):
+  a, b, w = map(int, input().split())
+  adjacency_list[a].append((b, w))
+  adjacency_list[b].append((a, w))
 
-  h = []
-  def relax(u, v):
-    distanceThroughU = distanceToRoot[u] + adjacencyMatrix[u][v]
-    if distanceToRoot[v] > distanceThroughU:
-      distanceToRoot[v] = distanceThroughU
-      predecessor[v] = u
-      heappush(h, (distanceThroughU, v))
+min_heap = []
+distanceToRoot[1] = 0
+heappush(min_heap, (0, 1))
+while min_heap:
+  distanceToRootFromU, uid = heappop(min_heap)
+  for vid, weight in adjacency_list[uid]:
+      distanceThroughU = distanceToRootFromU + weight
+      if distanceToRoot[vid] > distanceThroughU:
+        distanceToRoot[vid] = distanceThroughU
+        predecessor[vid] = uid
+        heappush(min_heap, (distanceThroughU, vid))
 
-  tmp = [None]
-  predecessor[1] = 1
-  distanceToRoot[1] = 0
-  heappush(h, (0, 1))
-  while len(h) > 0:
-    u = heappop(h)
-    uid = u[1]
-    tmp += [uid]
-    saw[uid] = True
-    if not adjacencyMatrix.get(uid): continue
-    for nid, _ in adjacencyMatrix[uid].items():
-      if not saw[nid]:
-        relax(uid, nid)
+nod = n
+output_list = []
+while nod != 1 and nod != None:
+  output_list += [nod]
+  nod = predecessor[nod]
 
-  output = str(n)
-  nod = predecessor[n]
-  while nod != 1 and nod != None:
-    output = str(nod) + " " + output
-    nod = predecessor[nod]
-  output = "1 " + output
-
-  if nod != None:
-    print(output)
-  else:
-    print("-1")
-
-except Exception as error:
-    just_the_string = traceback.format_exc()
-    print(str(tmp[-1]) + " " + just_the_string)
+if nod != None:
+  output_list += [nod]
+  output_list.reverse()
+  print(' '.join(map(str, output_list)))
+else:
+  print("-1")
